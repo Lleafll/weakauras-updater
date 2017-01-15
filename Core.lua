@@ -1,68 +1,6 @@
 local ADDON_NAME, Addon = ...
 
 
-
-function Addon:GetDisplayData(displayName, parentName, createNew)
-  local displayTemplate = self.Displays[parentName]["children"][displayName]
-  local display = {}
-
-  -- Copy template data to display
-  self:DeepCopy(displayTemplate["required"], display)
-  if createNew then
-    self:DeepCopy(displayTemplate["optional"], display)
-
-    for k, v in pairs(self.DisplayTemplate) do
-      display[k] = display[k] or v
-    end
-  end
-
-  display["parent"] = parentName
-  display["id"] = displayName
-
-  return display
-end
-
-
-function Addon:CreateDisplayParent(displayName, parentName)
-  -- Check for parent and create if necessary
-  if not WeakAuras.regions[parentName] then
-    local parentTemplate = self.Displays[parentName]
-    local parent = {}
-    parent["id"] = parentName
-    for k, v in pairs(parentTemplate["required"]) do
-      parent[k] = v
-    end
-    for k, v in pairs(parentTemplate["optional"]) do
-      parent[k] = v
-    end
-    for k, v in pairs(Addon.GroupTemplate) do
-      parent[k] = parent[k] or v
-    end
-    WeakAuras.Add(parent)
-  	local optionsFrame = WeakAuras.OptionsFrame and WeakAuras.OptionsFrame()
-  	if optionsFrame then
-      WeakAuras.NewDisplayButton(parent)  -- Create group button in WA options GUI
-    end
-  end
-end
-
-
-function Addon:AddDisplayToParent(displayName, parentName)
-  -- Set display as child of parent
-  local parentData = WeakAuras.GetData(parentName)
-  if parentData.controlledChildren then
-    local alreadyChild = false
-    for index, childId in ipairs(parentData.controlledChildren) do
-      if childId == displayName then
-        alreadyChild = true
-        break
-      end
-    end
-    if not alreadyChild then
-      parentData.controlledChildren[#parentData.controlledChildren + 1] = displayName
-    end
-  end
-end
 --------------------------------------------------------------------------------
 -- Upvalues
 --------------------------------------------------------------------------------
@@ -151,6 +89,69 @@ function Addon:DeleteGroup(parentName)
   end
 
   WeakAuras.SortDisplayButtons()
+end
+
+
+function Addon:GetDisplayData(displayName, parentName, createNew)
+  local displayTemplate = self.Displays[parentName]["children"][displayName]
+  local display = {}
+
+  -- Copy template data to display
+  self:DeepCopy(displayTemplate["required"], display)
+  if createNew then
+    self:DeepCopy(displayTemplate["optional"], display)
+
+    for k, v in pairs(self.DisplayTemplate) do
+      display[k] = display[k] or v
+    end
+  end
+
+  display["parent"] = parentName
+  display["id"] = displayName
+
+  return display
+end
+
+
+function Addon:CreateDisplayParent(displayName, parentName)
+  -- Check for parent and create if necessary
+  if not WeakAuras.regions[parentName] then
+    local parentTemplate = self.Displays[parentName]
+    local parent = {}
+    parent["id"] = parentName
+    for k, v in pairs(parentTemplate["required"]) do
+      parent[k] = v
+    end
+    for k, v in pairs(parentTemplate["optional"]) do
+      parent[k] = v
+    end
+    for k, v in pairs(Addon.GroupTemplate) do
+      parent[k] = parent[k] or v
+    end
+    WeakAuras.Add(parent)
+  	local optionsFrame = WeakAuras.OptionsFrame and WeakAuras.OptionsFrame()
+  	if optionsFrame then
+      WeakAuras.NewDisplayButton(parent)  -- Create group button in WA options GUI
+    end
+  end
+end
+
+
+function Addon:AddDisplayToParent(displayName, parentName)
+  -- Set display as child of parent
+  local parentData = WeakAuras.GetData(parentName)
+  if parentData.controlledChildren then
+    local alreadyChild = false
+    for index, childId in ipairs(parentData.controlledChildren) do
+      if childId == displayName then
+        alreadyChild = true
+        break
+      end
+    end
+    if not alreadyChild then
+      parentData.controlledChildren[#parentData.controlledChildren + 1] = displayName
+    end
+  end
 end
 
 
