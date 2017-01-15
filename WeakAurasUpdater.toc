@@ -1,0 +1,16 @@
+## Interface: 70100
+## Title: WeakAurasUpdater
+## Author: Lleafll
+## Version: v1beta
+## Notes: Updater for custom WeakAuras
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## SavedVariables: WeakAurasUpdaterDB
+## Dependencies: WeakAuras
+
+Localization\enUS.lua
+
+Init.lua
+Data.lua
+Core.lua
+GUI.lua
