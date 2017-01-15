@@ -67,6 +67,9 @@ end
 -- Upvalues
 --------------------------------------------------------------------------------
 local ipairs = ipairs
+local pairs = pairs
+local type = type
+local WeakAuras = WeakAuras
 
 
 --------------------------------------------------------------------------------
