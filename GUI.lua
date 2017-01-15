@@ -5,9 +5,13 @@ local ADDON_NAME, Addon = ...
 -- GUI initialization
 --------------------------------------------------------------------------------
 local L = Addon.L
-local GUI = Addon:NewModule("GUI")
+local GUI = Addon:NewModule("GUI", "AceConsole-3.0")
 Addon.GUI = GUI
 AUI = LibStub("AceGUI-3.0")
+GUI:RegisterChatCommand("wau", function(self)
+  GUI:Open()
+end)
+
 
 --------------------------------------------------------------------------------
 -- Upvalues
@@ -138,6 +142,9 @@ function GUI:Open()
   end)
   container:AddChild(groupList)
   Addon.GUI.groupList = groupList
+
+  -- Load and open WeakAuras options
+  WeakAuras.OpenOptions()
 end
 
 
@@ -153,10 +160,6 @@ end
 hooksecurefunc(WeakAuras, "pAdd", function(data)
   GUI:ReloadDisplay(data)
 end)
-
 hooksecurefunc(WeakAuras, "Delete", function(data)
   GUI:ReloadDisplay(data)
 end)
-
--- Debug
-GUI:Open()
