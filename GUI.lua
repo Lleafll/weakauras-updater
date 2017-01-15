@@ -1,4 +1,4 @@
-local addonName, Addon = ...
+local ADDON_NAME, Addon = ...
 
 local L = Addon.L
 local GUI = Addon:NewModule("GUI")
@@ -12,7 +12,7 @@ function GUI:Open()
   container:SetCallback("OnClose", function(self)
     AUI:Release(self)
   end)
-  container:SetTitle(addonName)
+  container:SetTitle(ADDON_NAME)
   container:SetLayout("Fill")
   self.container = container
 
