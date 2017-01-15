@@ -1,12 +1,23 @@
 local ADDON_NAME, Addon = ...
 
+
+--------------------------------------------------------------------------------
+-- GUI initialization
+--------------------------------------------------------------------------------
 local L = Addon.L
 local GUI = Addon:NewModule("GUI")
 Addon.GUI = GUI
 AUI = LibStub("AceGUI-3.0")
 
+--------------------------------------------------------------------------------
+-- Upvalues
+--------------------------------------------------------------------------------
 local WeakAuras = WeakAuras
 
+
+--------------------------------------------------------------------------------
+-- Upvalues
+--------------------------------------------------------------------------------
 function GUI:Open()
   local container = AUI:Create("Frame")
   container:SetCallback("OnClose", function(self)
@@ -128,7 +139,10 @@ function GUI:Open()
   Addon.GUI.groupList = groupList
 end
 
--- WeakAuras hook to register display manipulation
+
+--------------------------------------------------------------------------------
+-- WeakAuras hooks to register for WeakAuras-side data manipulation
+--------------------------------------------------------------------------------
 function GUI:ReloadDisplay(data)
   if self.groupList and (data.id == self.groupName or data.parent == self.groupName) then
     self.groupList:BuildDisplayList(self.groupName)

@@ -64,8 +64,15 @@ function Addon:AddDisplayToParent(displayName, parentName)
     end
   end
 end
+--------------------------------------------------------------------------------
+-- Upvalues
+--------------------------------------------------------------------------------
+local ipairs = ipairs
 
 
+--------------------------------------------------------------------------------
+-- Display creation/deletion/modification
+--------------------------------------------------------------------------------
 function Addon:AddDisplay(displayName, parentName)
   parentName = parentName or self:GetParentName()
 
@@ -150,6 +157,9 @@ function Addon:DeleteGroup(parentName)
 end
 
 
+--------------------------------------------------------------------------------
+-- WeakAurasOptions handling
+--------------------------------------------------------------------------------
 function Addon:UpdateWeakAurasOptions(display)
   local optionsFrame = WeakAuras.OptionsFrame and WeakAuras.OptionsFrame()
     if optionsFrame then
@@ -184,6 +194,9 @@ function Addon:GetParentName(displayName)
 end
 
 
+--------------------------------------------------------------------------------
+-- Utilities
+--------------------------------------------------------------------------------
 function Addon:IsInstalled(displayName)
   return WeakAuras.GetData(displayName) and true or false
 end
