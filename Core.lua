@@ -1,6 +1,5 @@
 local ADDON_NAME, Addon = ...
 
-local WeakAuras = WeakAuras
 
 
 function Addon:GetDisplayData(displayName, parentName, createNew)
