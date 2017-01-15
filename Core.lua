@@ -16,7 +16,7 @@ local WeakAuras = WeakAuras
 function Addon:AddDisplay(displayName, parentName)
   -- Create display and parent if necessary
   self:CreateDisplayParent(displayName, parentName)
-  local display = self:GetDisplayData(displayName, parentName, true)
+  local display = self:GetDisplayData(displayName, parentName)
   Addon:AddDisplayToParent(displayName, parentName)
 
   -- Add display to WeakAuras
@@ -36,6 +36,15 @@ function Addon:AddDisplay(displayName, parentName)
 end
 
 
+function Addon:AddGroup(parentName)
+  for displayName, v in pairs(self.Displays[parentName]["children"]) do
+    Addon:AddDisplay(displayName, parentName)
+  end
+
+  self:PickDisplay(parentName)
+end
+
+
 function Addon:UpdateDisplay(displayName, parentName)
   local display = WeakAuras.GetData(displayName)
   self:DeepCopy(self.Displays[parentName]["children"][displayName]["required"], display)
@@ -45,14 +54,28 @@ function Addon:UpdateDisplay(displayName, parentName)
 end
 
 
+function Addon:UpdateGroup(parentName)
+  for displayName, v in pairs(self.Displays[parentName]["children"]) do
+    self:UpdateDisplay(displayName, parentName)
+  end
+end
+
+
 function Addon:ResetDisplay(displayName, parentName)
   -- Create display and parent if necessary
   self:CreateDisplayParent(displayName, parentName)
-  local display = self:GetDisplayData(displayName, parentName, true)
+  local display = self:GetDisplayData(displayName, parentName)
   self:AddDisplayToParent(displayName, parentName)
 
   WeakAuras.Add(display)
   self:UpdateWeakAurasOptions(display)
+end
+
+
+function Addon:ResetGroup(parentName)
+  for displayName, v in pairs(self.Displays[parentName]["children"]) do
+    self:ResetDisplay(displayName, parentName)
+  end
 end
 
 
@@ -92,20 +115,16 @@ function Addon:DeleteGroup(parentName)
 end
 
 
-function Addon:GetDisplayData(displayName, parentName, createNew)
+function Addon:GetDisplayData(displayName, parentName)
   local displayTemplate = self.Displays[parentName]["children"][displayName]
   local display = {}
 
   -- Copy template data to display
   self:DeepCopy(displayTemplate["required"], display)
-  if createNew then
-    self:DeepCopy(displayTemplate["optional"], display)
-
-    for k, v in pairs(self.DisplayTemplate) do
-      display[k] = display[k] or v
-    end
+  self:DeepCopy(displayTemplate["optional"], display)
+  for k, v in pairs(self.DisplayTemplate) do
+    display[k] = display[k] or v
   end
-
   display["parent"] = parentName
   display["id"] = displayName
 

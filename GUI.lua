@@ -53,7 +53,8 @@ function GUI:Open()
     if not Addon.Displays[groupName]["children"] then
       return
     end
-    local isInstalled = Addon:IsInstalled(groupName)
+    local groupIsInstalled = Addon:IsInstalled(groupName)
+    local groupIsOutdatedOrModified = false  -- Gets evaluated in children loop
 
     -- Show Group
     local showGroupButton = AUI:Create("Button")
@@ -62,8 +63,37 @@ function GUI:Open()
     showGroupButton:SetCallback("OnClick", function()
       Addon:PickDisplay(groupName)
     end)
-    showGroupButton:SetDisabled(not isInstalled)
+    showGroupButton:SetDisabled(not groupIsInstalled)
     self:AddChild(showGroupButton)
+
+    -- Add Group
+    local installGroupButton = AUI:Create("Button")
+    installGroupButton:SetText(L["Add"])
+    installGroupButton:SetWidth(80)
+    installGroupButton:SetCallback("OnClick", function()
+      Addon:AddGroup(groupName)
+    end)
+    installGroupButton:SetDisabled(groupIsInstalled)
+    self:AddChild(installGroupButton)
+
+    -- Update
+    local updateGroupButton = AUI:Create("Button")
+    updateGroupButton:SetText(L["Update"])
+    updateGroupButton:SetWidth(80)
+    updateGroupButton:SetCallback("OnClick", function()
+      Addon:UpdateGroup(groupName)
+    end)
+    self:AddChild(updateGroupButton)
+
+    -- Reset Group
+    local resetGroupButton = AUI:Create("Button")
+    resetGroupButton:SetText(L["Reset"])
+    resetGroupButton:SetWidth(80)
+    resetGroupButton:SetCallback("OnClick", function()
+      Addon:ResetGroup(groupName)
+    end)
+    resetGroupButton:SetDisabled(not groupIsInstalled)
+    self:AddChild(resetGroupButton)
 
     -- Delete Group
     local deleteGroupButton = AUI:Create("Button")
@@ -72,12 +102,14 @@ function GUI:Open()
     deleteGroupButton:SetCallback("OnClick", function()
       Addon:DeleteGroup(groupName)
     end)
-    deleteGroupButton:SetDisabled(not isInstalled)
+    deleteGroupButton:SetDisabled(not groupIsInstalled)
     self:AddChild(deleteGroupButton)
 
+    -- Displays
     for displayName, v in pairs(Addon.Displays[groupName]["children"]) do
       local isInstalled = Addon:IsInstalled(displayName)
       local isOutdatedOrModified = Addon:IsOutdatedOrModified(displayName, groupName)
+      groupIsOutdatedOrModified = groupIsOutdatedOrModified or isOutdatedOrModified
 
       local displayGroup = AUI:Create("InlineGroup")
       displayGroup:SetTitle(displayName)
@@ -95,12 +127,12 @@ function GUI:Open()
       showButton:SetDisabled(not isInstalled)
       displayGroup:AddChild(showButton)
 
-      -- Install
+      -- Add
       local installButton = AUI:Create("Button")
-      installButton:SetText(L["Install"])
+      installButton:SetText(L["Add"])
       installButton:SetWidth(80)
       installButton:SetCallback("OnClick", function()
-        Addon:AddDisplay(displayName, groupName, true)
+        Addon:AddDisplay(displayName, groupName)
       end)
       installButton:SetDisabled(isInstalled)
       displayGroup:AddChild(installButton)
@@ -135,6 +167,9 @@ function GUI:Open()
       deleteButton:SetDisabled(not isInstalled)
       displayGroup:AddChild(deleteButton)
     end
+
+    -- Disabled status can only be set after iterating over children
+    updateGroupButton:SetDisabled(not groupIsInstalled or not groupIsOutdatedOrModified)
   end
   groupList:SetCallback("OnGroupSelected", function(self, event, value)
     GUI.groupName = value
