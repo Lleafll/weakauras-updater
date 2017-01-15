@@ -74,8 +74,6 @@ local ipairs = ipairs
 -- Display creation/deletion/modification
 --------------------------------------------------------------------------------
 function Addon:AddDisplay(displayName, parentName)
-  parentName = parentName or self:GetParentName()
-
   -- Create display and parent if necessary
   self:CreateDisplayParent(displayName, parentName)
   local display = self:GetDisplayData(displayName, parentName, true)
@@ -108,8 +106,6 @@ end
 
 
 function Addon:ResetDisplay(displayName, parentName)
-  parentName = parentName or self:GetParentName()
-
   -- Create display and parent if necessary
   self:CreateDisplayParent(displayName, parentName)
   local display = self:GetDisplayData(displayName, parentName, true)
@@ -121,7 +117,6 @@ end
 
 
 function Addon:DeleteDisplay(displayName, parentName)  -- TODO: Check if WA options are loaded instead of checking for every single function
-  parentName = parentName or self:GetParentName()
   local weakAurasData = WeakAuras.GetData(displayName)
   if not weakAurasData then
     return
@@ -189,11 +184,6 @@ function Addon:PickDisplay(displayName)
 end
 
 
-function Addon:GetParentName(displayName)
-  return
-end
-
-
 --------------------------------------------------------------------------------
 -- Utilities
 --------------------------------------------------------------------------------
@@ -203,7 +193,6 @@ end
 
 
 function Addon:IsOutdatedOrModified(displayName, parentName)
-  parentName = parentName or self:GetParentName()
   local weakAurasData = WeakAuras.GetData(displayName)
   if not weakAurasData then
     return
