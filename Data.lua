@@ -226,5 +226,4 @@ Addon.Displays["aaa"]["children"]["Despoiled Ground"] = {
 }
 
 
-Addon.Displays["test1"] = {}
 Addon.Displays["test2"] = {}
