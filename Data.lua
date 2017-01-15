@@ -227,3 +227,16 @@ Addon.Displays["aaa"]["children"]["Despoiled Ground"] = {
 
 
 Addon.Displays["test2"] = {}
+
+
+--------------------------------------------------------------------------------
+-- Compile list of displays for easy search
+--------------------------------------------------------------------------------
+Addon.DisplayParents = {}
+for groupName, v in pairs(Addon.Displays) do
+  if v and v["children"] then
+    for displayName in pairs(v["children"]) do
+      Addon.DisplayParents[displayName] = groupName
+    end
+  end
+end

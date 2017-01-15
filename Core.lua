@@ -17,7 +17,7 @@ function Addon:AddDisplay(displayName, parentName)
   -- Create display and parent if necessary
   self:CreateDisplayParent(displayName, parentName)
   local display = self:GetDisplayData(displayName, parentName)
-  Addon:AddDisplayToParent(displayName, parentName)
+  self:AddDisplayToParent(displayName, parentName)
 
   -- Add display to WeakAuras
   WeakAuras.Add(display)
@@ -62,10 +62,7 @@ end
 
 
 function Addon:ResetDisplay(displayName, parentName)
-  -- Create display and parent if necessary
-  self:CreateDisplayParent(displayName, parentName)
   local display = self:GetDisplayData(displayName, parentName)
-  self:AddDisplayToParent(displayName, parentName)
 
   WeakAuras.Add(display)
   self:UpdateWeakAurasOptions(display)
@@ -220,6 +217,7 @@ function Addon:IsOutdatedOrModified(displayName, parentName)
     return
   end
   local addonData = self.Displays[parentName]["children"][displayName]["required"]
+  addonData["parent"] = parentName
 
   local function compareTable(addonData, weakAurasData)
     if type(addonData) == "table" then
@@ -250,3 +248,39 @@ function Addon:DeepCopy(template, target)
     end
   end
 end
+
+
+--------------------------------------------------------------------------------
+-- WeakAuras hooks to register for WeakAuras-side data manipulation
+--------------------------------------------------------------------------------
+hooksecurefunc(WeakAuras, "pAdd", function(data)
+  local addonParent = Addon.DisplayParents[data.id]
+
+  if addonParent and addonParent ~= data.parent then
+    local oldId = data.id
+    local newId
+    local i = 1
+    repeat
+      i = i + 1
+      newId = data.id .. " " .. i
+      local IdExists = WeakAuras.GetData(id)
+    until not IdExists
+
+    -- Copied from self.callbacks.OnRenameAction in AceGUIWidget-WeakAurasDisplayButton.lua
+    WeakAuras.Rename(data, newId);
+
+    WeakAuras.thumbnails[newId] = WeakAuras.thumbnails[oldId];
+    WeakAuras.thumbnails[oldId] = nil;
+    WeakAuras.displayButtons[newId] = WeakAuras.displayButtons[oldId];
+    WeakAuras.displayButtons[oldId] = nil;
+    WeakAuras.displayOptions[oldId] = nil;
+    WeakAuras.AddOption(newId, data);
+
+    WeakAuras.displayButtons[newId]:SetTitle(newId);
+
+    WeakAuras.SetCopying();
+    WeakAuras.SetGrouping();
+    WeakAuras.SortDisplayButtons();
+    WeakAuras.PickDisplay(newId);
+  end
+end)

@@ -187,7 +187,7 @@ end
 -- WeakAuras hooks to register for WeakAuras-side data manipulation
 --------------------------------------------------------------------------------
 function GUI:ReloadDisplay(data)
-  if self.groupList and (data.id == self.groupName or data.parent == self.groupName) then
+  if self.groupList then
     self.groupList:BuildDisplayList(self.groupName)
   end
 end
